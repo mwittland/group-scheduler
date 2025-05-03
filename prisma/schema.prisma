@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"  // This specifies the output path for the Prisma Client
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Model Definitions
+
+model User {
+  id               Int            @id @default(autoincrement())
+  email            String         @unique
+  username         String
+  calendarsOwned   Calendar[]     @relation("OwnedCalendars")
+  calendarsJoined  Calendar[]     @relation("JoinedCalendars")
+  availability     Availability[]
+  invites          Invite[]       @relation("UserInvites") // Adding the inverse relation here
+}
+
+model Calendar {
+  id              Int            @id @default(autoincrement())
+  title           String
+  startDate       DateTime
+  endDate         DateTime
+  ownerId         Int
+  owner           User           @relation("OwnedCalendars", fields: [ownerId], references: [id])
+  participants    User[]         @relation("JoinedCalendars")
+  availability    Availability[]
+  invites         Invite[]       @relation("CalendarInvites") // inverse relation here
+}
+
+model Availability {
+  id          Int       @id @default(autoincrement())
+  calendarId  Int
+  userId      Int
+  isAvailable Boolean
+  calendar    Calendar  @relation(fields: [calendarId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+}
+
+model Invite {
+  id          Int      @id @default(autoincrement())
+  calendarId  Int
+  userId      Int
+  email       String
+  status      String   // 'pending', 'accepted', 'declined'
+  calendar    Calendar @relation("CalendarInvites", fields: [calendarId], references: [id])
+  user        User     @relation("UserInvites", fields: [userId], references: [id])
+}
+
+
+
