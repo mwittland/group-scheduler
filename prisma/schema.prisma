@@ -42,9 +42,10 @@ model Availability {
   id          Int       @id @default(autoincrement())
   calendarId  Int
   userId      Int
-  isAvailable Boolean
+  date        DateTime
   calendar    Calendar  @relation(fields: [calendarId], references: [id])
   user        User      @relation(fields: [userId], references: [id])
+  @@unique([calendarId, userId, date])
 }
 
 model Invite {

@@ -21,7 +21,7 @@ export const createCalendar = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Failed to create calendar" });
+    return res.status(500).json({ message: "Failed to create calendar" });
   }
 };
 
@@ -31,9 +31,9 @@ export const getCalendarById = async (req, res) => {
       where: { id: parseInt(req.params.id) },
     });
     if (!cal) return res.status(404).json({ error: "Calendar not found" });
-    res.json(cal);
+    return res.json(cal);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch calendar" });
+    return res.status(500).json({ error: "Failed to fetch calendar" });
   }
 };
 
@@ -42,9 +42,9 @@ export const deleteCalendarById = async (req, res) => {
     const deleted = await prisma.calendar.delete({
       where: { id: parseInt(req.params.id) }
     })
-    res.json(deleted);
+    return res.json(deleted);
   } catch (err) {
-    res.status(500).json({ error: "Failed to delete calendar" });
+    return res.status(500).json({ error: "Failed to delete calendar" });
   }
 }
 
@@ -55,9 +55,9 @@ export const getOwnedCalendars = async (req, res) => {
       where: {ownerId : oId}
     })
     if (!calendars) res.status(404).json({ error: "Calendars not found" });
-    res.json(calendars);
+    return res.json(calendars);
   } catch (err) {
-    res.status(500).json({ error: "Server error finding calendars"});
+    return res.status(500).json({ error: "Server error finding calendars"});
   }
 }
 
@@ -73,9 +73,9 @@ export const getParticipantCalendars = async (req, res) => {
         },
       },
     });
-    if (!participatingCalendars) res.status(404).json({ error: "Calendars not found" });
-    res.json(participatingCalendars);
+    if (!participatingCalendars) return res.status(404).json({ error: "Calendars not found" });
+    return res.json(participatingCalendars);
   } catch (err) {
-    res.status(500).json({ error: "Server error finding calendars"});
+    return res.status(500).json({ error: "Server error finding calendars"});
   }
 }

@@ -11,12 +11,12 @@ export const sendInvite = async (req, res) => {
     const recipientUser = await prisma.user.findUnique({
       where: { id: rId },
     });
-    if (!cal) res.status(404).json({ error: "Calendar does not exist" });
-    if (!recipientUser) res.status(404).json({ error: "User does not exist" });
+    if (!cal) return res.status(404).json({ error: "Calendar does not exist" });
+    if (!recipientUser) return res.status(404).json({ error: "User does not exist" });
     const check = await prisma.invite.findFirst({
       where: { calendarId: cId, userId: rId },
     });
-    if (check) res.status(404).json({ error: "Already invited this user" });
+    if (check) return res.status(404).json({ error: "Already invited this user" });
     const invite = await prisma.invite.create({
       data: {
         calendarId: parseInt(cId, 10),
@@ -25,9 +25,9 @@ export const sendInvite = async (req, res) => {
         status: "pending",
       },
     });
-    res.json(invite);
+    return res.json(invite);
   } catch (err) {
-    res.status(500).json({ message: "Server error when sending invite" });
+    return res.status(500).json({ message: "Server error when sending invite" });
   }
 };
 
@@ -36,7 +36,7 @@ export const acceptInvite = async (req, res) => {
   try {
     const { inviteId } = req.body;
     const invite = await prisma.invite.findUnique({ where: { id: inviteId } });
-    if (!invite) res.status(404).json("Invite not found");
+    if (!invite) return res.status(404).json("Invite not found");
     const updateInvites = await prisma.invite.update({
         where: {
             id: inviteId
@@ -59,9 +59,9 @@ export const acceptInvite = async (req, res) => {
         },
     })
     console.log(updateCalendars);
-    res.json("Invite accepted");
+    return res.json("Invite accepted");
   } catch (err) {
-    res.status(500).json("Server error accepting invite");
+    return res.status(500).json("Server error accepting invite");
   }
 };
 
@@ -70,10 +70,10 @@ export const declineInvite = async (req, res) => {
   try {
     const { inviteId } = req.body;
     const invite = await prisma.invite.findUnique({ where: { id: inviteId } });
-    if (!invite) res.status(404).json("Invite not found");
+    if (!invite) return res.status(404).json("Invite not found");
     const deleted = await prisma.invite.delete({ where: {id: inviteId }});
-    res.json("Invite declined");
+    return res.json("Invite declined");
   } catch (err) {
-    res.status(500).json("Server error accepting invite");
+    return res.status(500).json("Server error accepting invite");
   }
 };
