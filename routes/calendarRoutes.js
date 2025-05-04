@@ -1,6 +1,10 @@
 import express from 'express';
-import { createCalendar, getCalendarById } from '../controllers/calendarController.js';
+import { createCalendar, getCalendarById, deleteCalendarById, getOwnedCalendars, getParticipantCalendars } from '../controllers/calendarController.js';
+import { requireAuth } from '../middleware/auth.js';
 const router = express.Router();
-router.post('/', createCalendar);
-router.get('/:id', getCalendarById);
+router.post('/', requireAuth, createCalendar);
+router.get('/:id', requireAuth, getCalendarById);
+router.delete('/:id', requireAuth, deleteCalendarById);
+router.get('/owned/:userId', requireAuth, getOwnedCalendars);
+router.get('/participant/:userId', requireAuth, getParticipantCalendars);
 export default router;
