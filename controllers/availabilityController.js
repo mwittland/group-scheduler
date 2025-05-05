@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-//add routes to create and update availability
 export const createAvailability = async (req, res) => {
   try {
     const { calendarId, userId, availableDates } = req.body;
@@ -31,7 +30,6 @@ export const createAvailability = async (req, res) => {
     const startDate = new Date(calendar.startDate);
     const endDate = new Date(calendar.endDate);
 
-    // Filter and format dates
     const validDates = availableDates.filter((dateStr) => {
       const d = new Date(dateStr);
       return d >= startDate && d <= endDate;
@@ -43,10 +41,9 @@ export const createAvailability = async (req, res) => {
       date: new Date(dateStr),
     }));
 
-    // Create all availability entries in one call
     const created = await prisma.availability.createMany({
       data: availabilityData,
-      skipDuplicates: true, // avoids errors if any dates already exist for that user
+      skipDuplicates: true,
     });
 
     return res

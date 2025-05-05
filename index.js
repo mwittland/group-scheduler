@@ -1,14 +1,28 @@
-import express from 'express';
-import userRoutes from './routes/userRoutes.js';
-import calendarRoutes from './routes/calendarRoutes.js';
-import inviteRoutes from './routes/inviteRoutes.js';
-import availabilityRoutes from './routes/availabilityRoutes.js';
+import express from "express";
+import session from "express-session";
+import passport from "passport";
+import userRoutes from "./routes/userRoutes.js";
+import calendarRoutes from "./routes/calendarRoutes.js";
+import inviteRoutes from "./routes/inviteRoutes.js";
+import availabilityRoutes from "./routes/availabilityRoutes.js";
+import authRoutes from './routes/authRoutes.js';
+import './middleware/passport.js';
 const app = express();
 app.use(express.json());
-app.use('/api/users', userRoutes);
-app.use('/api/calendars', calendarRoutes);
-app.use('/api/invites', inviteRoutes);
-app.use('/api/availability', availabilityRoutes);
+app.use(
+  session({
+    secret: "your-session-secret", // store securely in env in production
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use('/auth', authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/calendars", calendarRoutes);
+app.use("/api/invites", inviteRoutes);
+app.use("/api/availability", availabilityRoutes);
 app.listen(3000, () => {
-    console.log("server running on port 3000");
-})
+  console.log("server running on port 3000");
+});

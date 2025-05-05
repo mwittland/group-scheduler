@@ -19,7 +19,9 @@ datasource db {
 model User {
   id               Int            @id @default(autoincrement())
   email            String         @unique
-  username         String
+  username         String?
+  name             String?
+  googleId         String?        @unique
   calendarsOwned   Calendar[]     @relation("OwnedCalendars")
   calendarsJoined  Calendar[]     @relation("JoinedCalendars")
   availability     Availability[]
