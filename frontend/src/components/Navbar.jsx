@@ -23,7 +23,6 @@ const Navbar = () => {
         <li>
           <button onClick={handleLogout}>Logout</button>
         </li>
-        {/* add more links to navbar */}
       </ul>
     </nav>
   );

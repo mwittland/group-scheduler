@@ -11,6 +11,9 @@ import GuestNavbar from './components/GuestNavbar';
 import Navbar from './components/Navbar';
 import About from './pages/About';
 import Login from './pages/Login';
+import Calendars from './pages/Calendars';
+import Invites from './pages/Invites';
+
 function App() {
   const [user, setUser] = useState(null);
   useEffect(() => {
@@ -24,10 +27,11 @@ function App() {
     <Router>
       {user ? <Navbar /> : <GuestNavbar />}
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<Landing user={user}/>} />
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
-        {/* add more routes*/}
+        <Route path="/calendars" element={<Calendars user={user}/>} />
+        <Route path="/invites" element={<Invites user={user}/>} />
       </Routes>
     </Router>
   );

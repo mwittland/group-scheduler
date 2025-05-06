@@ -1,7 +1,6 @@
 const About = () => (
     <div>
-      <h1>About Page</h1>
-      <p>About Page Info</p>
+      <h1>About</h1>
     </div>
   );
   

@@ -1,7 +1,6 @@
-const Landing = () => (
+const Landing = ({ user }) => (
     <div>
       <h1>Welcome to WhatDaysWork</h1>
-      <p>Your group scheduling tool.</p>
     </div>
   );
   
