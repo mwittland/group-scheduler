@@ -10,16 +10,23 @@ router.get('/google',
 router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    // Redirect or send token/session info
-    res.redirect('/dashboard'); // or send user info
+    res.redirect('http://localhost:3001/');
   }
 );
 
 router.get('/logout', (req, res) => {
   req.logout(err => {
     if (err) return res.status(500).send('Logout error');
-    res.redirect('/');
+    res.redirect('http://localhost:3001/');
   });
+});
+
+router.get('/status', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json({ user: req.user });
+  } else {
+    res.status(401).json({ user: null });
+  }
 });
 
 export default router;

@@ -7,6 +7,7 @@ import inviteRoutes from "./routes/inviteRoutes.js";
 import availabilityRoutes from "./routes/availabilityRoutes.js";
 import authRoutes from './routes/authRoutes.js';
 import './middleware/passport.js';
+import cors from 'cors';
 const app = express();
 app.use(express.json());
 app.use(
@@ -16,6 +17,10 @@ app.use(
     saveUninitialized: false,
   })
 );
+app.use(cors({
+  origin: 'http://localhost:3001',
+  credentials: true,
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/auth', authRoutes);
