@@ -1,8 +1,7 @@
 import {
   BrowserRouter as Router,
   Routes,
-  Route,
-  Navigate
+  Route
 } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchCurrentUser } from './utils/auth';
@@ -13,6 +12,7 @@ import About from './pages/About';
 import Login from './pages/Login';
 import Calendars from './pages/Calendars';
 import Invites from './pages/Invites';
+import CalendarPage from './pages/CalendarPage';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -32,6 +32,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/calendars" element={<Calendars user={user}/>} />
         <Route path="/invites" element={<Invites user={user}/>} />
+        <Route path="/calendar/:id" element={<CalendarPage user={user} />} />
       </Routes>
     </Router>
   );

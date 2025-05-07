@@ -12,11 +12,13 @@ export const sendInvite = async (req, res) => {
       where: { id: rId },
     });
     if (!cal) return res.status(404).json({ error: "Calendar does not exist" });
-    if (!recipientUser) return res.status(404).json({ error: "User does not exist" });
+    if (!recipientUser)
+      return res.status(404).json({ error: "User does not exist" });
     const check = await prisma.invite.findFirst({
       where: { calendarId: cId, userId: rId },
     });
-    if (check) return res.status(404).json({ error: "Already invited this user" });
+    if (check)
+      return res.status(404).json({ error: "Already invited this user" });
     const invite = await prisma.invite.create({
       data: {
         calendarId: parseInt(cId, 10),
@@ -27,7 +29,9 @@ export const sendInvite = async (req, res) => {
     });
     return res.json(invite);
   } catch (err) {
-    return res.status(500).json({ message: "Server error when sending invite" });
+    return res
+      .status(500)
+      .json({ message: "Server error when sending invite" });
   }
 };
 
@@ -37,27 +41,20 @@ export const acceptInvite = async (req, res) => {
     const { inviteId } = req.body;
     const invite = await prisma.invite.findUnique({ where: { id: inviteId } });
     if (!invite) return res.status(404).json("Invite not found");
-    const updateInvites = await prisma.invite.update({
-        where: {
-            id: inviteId
-        }, 
-        data: {
-            status: "accepted"
-        }
-    });
     const updateCalendars = await prisma.calendar.update({
-        where: {
-            id: invite.calendarId
+      where: {
+        id: invite.calendarId,
+      },
+      data: {
+        participants: {
+          connect: { id: invite.userId },
         },
-        data: {
-            participants: {
-                connect: { id: invite.userId },
-            }
-        },
-        include: {
-            participants: true, // This ensures participants are included in the returned data
-        },
-    })
+      },
+      include: {
+        participants: true, // This ensures participants are included in the returned data
+      },
+    });
+    await prisma.invite.delete({ where: { id: inviteId } });
     console.log(updateCalendars);
     return res.json("Invite accepted");
   } catch (err) {
@@ -71,9 +68,30 @@ export const declineInvite = async (req, res) => {
     const { inviteId } = req.body;
     const invite = await prisma.invite.findUnique({ where: { id: inviteId } });
     if (!invite) return res.status(404).json("Invite not found");
-    const deleted = await prisma.invite.delete({ where: {id: inviteId }});
+    await prisma.invite.delete({ where: { id: inviteId } });
     return res.json("Invite declined");
   } catch (err) {
     return res.status(500).json("Server error accepting invite");
+  }
+};
+
+export const viewInvites = async (req, res) => {
+  try {
+    const uId = parseInt(req.params.id);
+    const invites = await prisma.invite.findMany({
+      where: { userId: uId },
+      include: {
+        calendar: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+    });
+    if (!invites) res.status(404).json({ error: "Invites not found" });
+    return res.json(invites);
+  } catch (err) {
+    return res.status(500).json("Server error getting invites");
   }
 };

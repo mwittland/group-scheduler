@@ -27,11 +27,32 @@ export const createCalendar = async (req, res) => {
 
 export const getCalendarById = async (req, res) => {
   try {
+    /*
     const cal = await prisma.calendar.findUnique({
       where: { id: parseInt(req.params.id) },
     });
     if (!cal) return res.status(404).json({ error: "Calendar not found" });
     return res.json(cal);
+    */
+    const userId = req.user.id; // from requireAuth middleware
+    const calendarId = parseInt(req.params.id);
+  
+    const calendar = await prisma.calendar.findUnique({
+      where: { id: calendarId },
+      include: {
+        participants: true,
+        owner: true,
+      },
+    });
+  
+    if (
+      calendar.ownerId !== userId &&
+      !calendar.participants.some((user) => user.id === userId)
+    ) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+  
+    return res.json(calendar);
   } catch (err) {
     return res.status(500).json({ error: "Failed to fetch calendar" });
   }
