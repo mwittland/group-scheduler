@@ -24,7 +24,7 @@ export const createAvailability = async (req, res) => {
     }
 
     await prisma.availability.deleteMany({
-        where: { userId, calendarId }
+      where: { userId, calendarId },
     });
 
     const startDate = new Date(calendar.startDate);
@@ -55,14 +55,62 @@ export const createAvailability = async (req, res) => {
 };
 
 export const getAvailabilityByCalendarId = async (req, res) => {
-    try {
-        const calendar = await prisma.calendar.findUnique({where: {id: parseInt(req.params.id)}});
-        if (!calendar) return res.status(404).json({error:"Calendar not found"});
-        const availability = await prisma.availability.findMany({
-            where: { calendarId: calendar.id },
-        });
-        return res.json(availability);
-    } catch (err) {
-        return res.status(500).json({ error: "Server finding availability" });
+  try {
+    const calendar = await prisma.calendar.findUnique({
+      where: { id: parseInt(req.params.id) },
+    });
+    if (!calendar) return res.status(404).json({ error: "Calendar not found" });
+    const availability = await prisma.availability.findMany({
+      where: { calendarId: calendar.id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+      },
+    });
+    return res.json(availability);
+  } catch (err) {
+    return res.status(500).json({ error: "Server finding availability" });
+  }
+};
+
+export const toggleAvailability = async (req, res) => {
+  try {
+    const { calendarId, userId, date } = req.body;
+    const dateOnly = new Date(new Date(date).toISOString().split("T")[0]);
+    const checkDay = await prisma.availability.findUnique({
+      where: {
+        calendarId_userId_date: {
+          calendarId,
+          userId,
+          date: dateOnly,
+        },
+      },
+    })
+    if (checkDay) {
+      await prisma.availability.delete({
+        where: {
+          calendarId_userId_date: {
+            calendarId,
+            userId,
+            date: dateOnly,
+          },
+        },
+      });
+      return res.json({ message: "Availability removed" });
     }
+    const newAvailability = await prisma.availability.create({
+      data: {
+        calendarId,
+        userId,
+        date: dateOnly,
+      },
+    });
+    return res.json(newAvailability);
+  } catch (err) {
+    return res.status(500).json({ error: "Server error toggling availability" });
+  }
 }

@@ -4,17 +4,14 @@ const prisma = new PrismaClient();
 export const createCalendar = async (req, res) => {
   const { title, startDate, endDate, ownerId } = req.body;
   try {
-    // Create the calendar in the database
     const newCalendar = await prisma.calendar.create({
       data: {
         title,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
-        ownerId: parseInt(ownerId, 10), // Ensure ownerId is an integer
+        ownerId: parseInt(ownerId, 10),
       },
     });
-
-    // Send the response with the new calendar
     return res.status(201).json({
       message: "Calendar created successfully!",
       calendar: newCalendar,
@@ -27,14 +24,7 @@ export const createCalendar = async (req, res) => {
 
 export const getCalendarById = async (req, res) => {
   try {
-    /*
-    const cal = await prisma.calendar.findUnique({
-      where: { id: parseInt(req.params.id) },
-    });
-    if (!cal) return res.status(404).json({ error: "Calendar not found" });
-    return res.json(cal);
-    */
-    const userId = req.user.id; // from requireAuth middleware
+    const userId = req.user.id;
     const calendarId = parseInt(req.params.id);
   
     const calendar = await prisma.calendar.findUnique({
