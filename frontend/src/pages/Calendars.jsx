@@ -65,11 +65,17 @@ const Calendars = ({ user }) => {
       console.error("Failed to delete calendar");
     }
   };
+
+  if (!user) {
+    return <p>Loading Your Calendars</p>;
+  }
+
   return (
     <div>
       <h1>Calendars</h1>
       <h2>Owned Calendars</h2>
       <ul>
+        {ownedCalendars.length === 0 && <p>You do not own any calendars</p>}
         {ownedCalendars.map((cal) => (
           <div>
             <Link to={`/calendar/${cal.id}`}>
@@ -81,6 +87,7 @@ const Calendars = ({ user }) => {
       </ul>
       <h2>Joined Calendars</h2>
       <ul>
+        {joinedCalendars.length === 0 && <p>You are not a participant in any calendars</p>}
         {joinedCalendars.map((cal) => (
           <div>
             <Link to={`/calendar/${cal.id}`}>

@@ -35,12 +35,16 @@ const Invites = ({ user }) => {
       console.error("Error declining invite: ", err);
     }
   };
+  if (!user) {
+    return <p>Loading Your Invites</p>;
+  }
   return (
     <div>
       <h1>Invites</h1>
       <h2>Pending Outgoing Invites (to be implemented later)</h2>
       <h2>Received Invites</h2>
       <ul>
+        {receivedInvites.length === 0 && <p>You have no pending invites</p>}
         {receivedInvites.map((inv) => (
           <div>
             <p>Invite To {inv.calendar.title}</p>
