@@ -17,6 +17,7 @@ const CalendarPage = ({ user }) => {
     users: [],
     date: "",
   });
+  const [userAvailability, setUserAvailability] = useState([]);
   const getCalendarDetails = async () => {
     try {
       const res = await api.get(`/api/calendars/${id}`);
@@ -27,27 +28,44 @@ const CalendarPage = ({ user }) => {
   };
   const fetchAvailability = async () => {
     const res = await api.get(`/api/availability/${calendar.id}`);
-    const availabilityList = res.data; // array of { date, userId }
-    const groupedByDate = availabilityList.reduce((acc, { date, user }) => {
-      const dayOnly = new Date(date).toISOString().split("T")[0]; // Normalize to YYYY-MM-DD
-      if (!acc[dayOnly]) {
-        acc[dayOnly] = { date: dayOnly, users: [] };
-      }
-      acc[dayOnly].users.push(user);
-      return acc;
-    }, {});
+    const availabilityList = res.data;
 
-    // Convert the grouped object to an array of events
+    const groupedByDate = {};
+    const userDates = [];
+    const currentUser = user;
+
+    availabilityList.forEach(({ date, user }) => {
+      const dayOnly = new Date(date).toISOString().split("T")[0];
+
+      if (!groupedByDate[dayOnly]) {
+        groupedByDate[dayOnly] = { date: dayOnly, users: [] };
+      }
+      groupedByDate[dayOnly].users.push(user);
+
+      if (currentUser.id === user.id) {
+        userDates.push(dayOnly);
+      }
+    });
+
     const formatted = Object.values(groupedByDate).map(({ date, users }) => ({
       title: `${users.length} available`,
       date,
-      users, // Store the list of users directly here
+      users,
+      type: "availability",
     }));
+
+    const userEvents = userDates.map((date) => ({
+      start: date,
+      display: "background",
+      backgroundColor: "lightgreen",
+      type: "user",
+    }));
+
     setAvailabilityEvents(formatted);
+    setUserAvailability(userEvents);
   };
   const handleInviteSent = async (e) => {
     e.preventDefault();
-    //get user from email
     try {
       const newUser = await api.get("/api/users", {
         params: { userEmail: emailToInvite },
@@ -77,12 +95,13 @@ const CalendarPage = ({ user }) => {
     }
   };
   const handleEventMouseEnter = (info) => {
+    if (info.event.extendedProps.type !== "availability") return;
     const dateHovered = info.event.start.toISOString().split("T")[0];
     const event = availabilityEvents.find(
       (event) => event.date === dateHovered
     );
     if (event) {
-      const rect = info.el.getBoundingClientRect(); // position of the calendar event element
+      const rect = info.el.getBoundingClientRect();
       setHoverBox({
         visible: true,
         x: rect.left + window.scrollX,
@@ -95,6 +114,20 @@ const CalendarPage = ({ user }) => {
 
   const handleEventMouseLeave = () => {
     setHoverBox({ visible: false, x: 0, y: 0, users: [], date: "" });
+  };
+  const handleDateClick = async (info) => {
+    const clickedDate = info.dateStr;
+    try {
+      await api.post("/api/availability/toggle", {
+        calendarId: calendar.id,
+        userId: user.id,
+        date: clickedDate,
+      });
+
+      fetchAvailability();
+    } catch (err) {
+      console.error("Failed to toggle availability", err);
+    }
   };
   useEffect(() => {
     getCalendarDetails();
@@ -141,9 +174,10 @@ const CalendarPage = ({ user }) => {
           start: calendar.startDate,
           end: calendar.endDate,
         }}
-        events={availabilityEvents}
+        events={[...availabilityEvents, ...userAvailability]}
         eventMouseEnter={handleEventMouseEnter}
         eventMouseLeave={handleEventMouseLeave}
+        dateClick={handleDateClick}
       />
       {hoverBox.visible && (
         <div
