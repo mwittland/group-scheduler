@@ -2,7 +2,9 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const handleLogout = async () => {
-    window.location.href = `${process.env.REACT_APP_API_BASE_URL}/auth/logout`;
+    const apiUrl =
+      process.env.REACT_APP_API_BASE_URL || "http://localhost:3000"; // Fallback if the env var isn't set
+    window.location.href = `${apiUrl}/auth/logout`;
   };
 
   return (
