@@ -10,14 +10,14 @@ router.get('/google',
 router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('http://localhost:3001/');
+    res.redirect(process.env.CLIENT_ORIGIN || 'http://localhost:3001/');
   }
 );
 
 router.get('/logout', (req, res) => {
   req.logout(err => {
     if (err) return res.status(500).send('Logout error');
-    res.redirect('http://localhost:3001/');
+    res.redirect(process.env.CLIENT_ORIGIN || 'http://localhost:3001/');
   });
 });
 

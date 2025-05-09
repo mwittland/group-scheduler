@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const GuestNavbar = () => {
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:3000/auth/google";
+    window.location.href = `${process.env.REACT_APP_API_BASE_URL}/auth/google`;
   };
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">

@@ -18,7 +18,7 @@ app.use(
   })
 );
 app.use(cors({
-  origin: 'http://localhost:3001',
+  origin: process.env.CLIENT_ORIGIN || 'http://localhost:3001',
   credentials: true,
 }));
 app.use(passport.initialize());
