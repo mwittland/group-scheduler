@@ -5,11 +5,17 @@ import userRoutes from "./routes/userRoutes.js";
 import calendarRoutes from "./routes/calendarRoutes.js";
 import inviteRoutes from "./routes/inviteRoutes.js";
 import availabilityRoutes from "./routes/availabilityRoutes.js";
-import authRoutes from './routes/authRoutes.js';
-import './middleware/passport.js';
-import cors from 'cors';
+import authRoutes from "./routes/authRoutes.js";
+import "./middleware/passport.js";
+import cors from "cors";
 const app = express();
 app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN || "http://localhost:3001",
+    credentials: true,
+  })
+);
 app.use(
   session({
     secret: process.env.SESSION_SECRET, // store securely in env in production
@@ -17,13 +23,9 @@ app.use(
     saveUninitialized: false,
   })
 );
-app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || 'http://localhost:3001',
-  credentials: true,
-}));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use('/auth', authRoutes);
+app.use("/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/calendars", calendarRoutes);
 app.use("/api/invites", inviteRoutes);
