@@ -21,9 +21,6 @@ app.use(
     secret: process.env.SESSION_SECRET, // store securely in env in production
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      sameSite: "None",
-    },
   })
 );
 app.use(passport.initialize());
