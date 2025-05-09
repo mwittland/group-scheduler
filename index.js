@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(
   session({
-    secret: "your-session-secret", // store securely in env in production
+    secret: process.env.SESSION_SECRET, // store securely in env in production
     resave: false,
     saveUninitialized: false,
   })
