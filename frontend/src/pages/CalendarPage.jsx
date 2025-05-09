@@ -3,6 +3,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import bootstrap5Plugin from "@fullcalendar/bootstrap5";
 import api from "../utils/axios";
 
 const CalendarPage = ({ user }) => {
@@ -143,42 +144,62 @@ const CalendarPage = ({ user }) => {
 
   return (
     <div>
-      <h1>{calendar.title}</h1>
-      <h2>Details</h2>
-      <p>Owner: {calendar.owner.email}</p>
-      <p>Participant Count: {calendar.participants.length + 1}</p>
-      <p>
-        Start Date: {new Date(calendar.startDate).toISOString().split("T")[0]}
-      </p>
-      <p>End Date: {new Date(calendar.endDate).toISOString().split("T")[0]}</p>
+      <div className="col d-flex justify-content-center">
+        <div className="card bg-dark text-white w-75">
+          <div className="card-header">
+            <h2 className="text-center">Details</h2>
+          </div>
+          <p>Name: {calendar.title}</p>
+          <p>Owner: {calendar.owner.email}</p>
+          <p>Participant Count: {calendar.participants.length + 1}</p>
+          <p>
+            Start Date:{" "}
+            {new Date(calendar.startDate).toISOString().split("T")[0]}
+          </p>
+          <p>
+            End Date: {new Date(calendar.endDate).toISOString().split("T")[0]}
+          </p>
+        </div>
+      </div>
       {user.id === calendar.ownerId && (
-        <div>
-          <h2>Invite Users</h2>
-          <form onSubmit={handleInviteSent}>
-            <input
-              type="text"
-              value={emailToInvite}
-              onChange={(e) => setEmailToInvite(e.target.value)}
-              placeholder="User Email"
-              required
-            />
-            <button type="submit">Invite</button>
-          </form>
+        <div className="d-flex justify-content-center">
+          <div className="card bg-dark text-white w-75">
+            <div className="card-header">
+              <h2 className="text-center">Invite Users</h2>
+            </div>
+            <form onSubmit={handleInviteSent}>
+              <div className="d-flex justify-content-center">
+                <input
+                  type="text"
+                  value={emailToInvite}
+                  onChange={(e) => setEmailToInvite(e.target.value)}
+                  placeholder="User Email"
+                  required
+                />
+                <button className="btn btn-success" type="submit">
+                  Invite
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
-      <h2>Availability</h2>
-      <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        validRange={{
-          start: calendar.startDate,
-          end: calendar.endDate,
-        }}
-        events={[...availabilityEvents, ...userAvailability]}
-        eventMouseEnter={handleEventMouseEnter}
-        eventMouseLeave={handleEventMouseLeave}
-        dateClick={handleDateClick}
-      />
+      <div className="bg-dark text-white p-3">
+        <FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin, bootstrap5Plugin]}
+          initialDate={calendar.startDate}
+          initialView="dayGridMonth"
+          themeSystem="bootstrap5"
+          validRange={{
+            start: calendar.startDate,
+            end: calendar.endDate,
+          }}
+          events={[...availabilityEvents, ...userAvailability]}
+          eventMouseEnter={handleEventMouseEnter}
+          eventMouseLeave={handleEventMouseLeave}
+          dateClick={handleDateClick}
+        />
+      </div>
       {hoverBox.visible && (
         <div
           style={{
@@ -193,14 +214,14 @@ const CalendarPage = ({ user }) => {
             zIndex: 1000,
           }}
         >
-          <h4>Available on {hoverBox.date}</h4>
-          <ul>
+          <h4 className="text-black">Available on {hoverBox.date}</h4>
+          <ul className="list-unstyled mb-0 text-black">
             {hoverBox.users.length > 0 ? (
               hoverBox.users.map((user, index) => (
                 <li key={index}>{user.email}</li>
               ))
             ) : (
-              <p>No users available</p>
+              <li className="text-muted">No users available</li>
             )}
           </ul>
         </div>

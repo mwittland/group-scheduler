@@ -40,19 +40,29 @@ const Invites = ({ user }) => {
   }
   return (
     <div>
-      <h1>Invites</h1>
-      <h2>Pending Outgoing Invites (to be implemented later)</h2>
-      <h2>Received Invites</h2>
-      <ul>
-        {receivedInvites.length === 0 && <p>You have no pending invites</p>}
-        {receivedInvites.map((inv) => (
-          <div>
-            <p>Invite To {inv.calendar.title}</p>
-            <button onClick={() => handleAcceptInvite(inv.id)}>Accept</button>
-            <button onClick={() => handleDeclineInvite(inv.id)}>Decline</button>
-          </div>
-        ))}
-      </ul>
+      <h1 className="text-center">Pending Invites</h1>
+      <div className="row">
+        <div>
+          {receivedInvites.length === 0 && (
+            <p className="text-center">You have no pending invites</p>
+          )}
+          {receivedInvites.map((inv) => (
+            <div className="col d-flex justify-content-center">
+              <div className="card bg-dark text-white w-75">
+                <div className="card-header text-center">
+                  <h3>Invite To {inv.calendar.title}</h3>
+                </div>
+                <button className="btn btn-success" onClick={() => handleAcceptInvite(inv.id)}>
+                  Accept
+                </button>
+                <button className="btn btn-danger" onClick={() => handleDeclineInvite(inv.id)}>
+                  Decline
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

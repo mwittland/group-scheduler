@@ -8,11 +8,13 @@ import { fetchCurrentUser } from './utils/auth';
 import Landing from './pages/Landing';
 import GuestNavbar from './components/GuestNavbar';
 import Navbar from './components/Navbar';
-import About from './pages/About';
-import Login from './pages/Login';
 import Calendars from './pages/Calendars';
 import Invites from './pages/Invites';
 import CalendarPage from './pages/CalendarPage';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+import '@fullcalendar/bootstrap5';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -28,8 +30,6 @@ function App() {
       {user ? <Navbar /> : <GuestNavbar />}
       <Routes>
         <Route path="/" element={<Landing user={user}/>} />
-        <Route path="/about" element={<About />} />
-        <Route path="/login" element={<Login />} />
         <Route path="/calendars" element={<Calendars user={user}/>} />
         <Route path="/invites" element={<Invites user={user}/>} />
         <Route path="/calendar/:id" element={<CalendarPage user={user} />} />
