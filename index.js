@@ -22,6 +22,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
+      domain: process.env.NODE_ENV === "production" ? ".onrender.com" : "localhost",
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       secure: process.env.NODE_ENV === "production",
