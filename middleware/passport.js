@@ -9,7 +9,6 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL:  process.env.GOOGLE_CALLBACK_URL || '/auth/google/callback',
 }, async (accessToken, refreshToken, profile, done) => {
-  console.log('Google authentication callback triggered');
   try {
     let user = await prisma.user.findUnique({ where: { googleId: profile.id } });
     if (!user) {
@@ -21,10 +20,8 @@ passport.use(new GoogleStrategy({
         },
       });
     }
-    console.log('User found or created:', user);
     return done(null, user);
   } catch (err) {
-    console.error('Error during authentication:', err);
     return done(err, null);
   }
 }));

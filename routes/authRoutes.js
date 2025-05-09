@@ -10,7 +10,6 @@ router.get('/google',
 router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    console.log('Authentication succeeded');
     res.redirect(process.env.CLIENT_ORIGIN || 'http://localhost:3001/');
   }
 );
