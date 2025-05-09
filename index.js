@@ -21,13 +21,6 @@ app.use(
     secret: process.env.SESSION_SECRET, // store securely in env in production
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      domain: process.env.NODE_ENV === "production" ? ".onrender.com" : "localhost",
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 30 * 24 * 60 * 60 * 1000
-    }
   })
 );
 app.use(passport.initialize());
