@@ -18,11 +18,25 @@ app.use(
 );
 app.use(
   session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // only true in prod
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    },
+  })
+);
+/*
+app.use(
+  session({
     secret: process.env.SESSION_SECRET, // store securely in env in production
     resave: false,
     saveUninitialized: false,
   })
 );
+*/
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/auth", authRoutes);
