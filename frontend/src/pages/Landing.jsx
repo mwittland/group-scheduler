@@ -1,6 +1,6 @@
 const Landing = ({ user }) => (
   <div>
-  <h1 className="text-center">Welcome to WhatDaysWork!</h1>
+  <h1 className="text-center">Welcome!</h1>
   <div className="row">
     <div className="col-12 col-md-6 mb-4">
       <div className="d-flex justify-content-center">
