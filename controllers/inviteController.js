@@ -1,7 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-
-//create methods for routes
 export const sendInvite = async (req, res) => {
   try {
     const { cId, rId } = req.body;
@@ -36,7 +34,6 @@ export const sendInvite = async (req, res) => {
 };
 
 export const acceptInvite = async (req, res) => {
-  //when you accept invite status is set to accepted and user is added to participant list in calendar
   try {
     const { inviteId } = req.body;
     const invite = await prisma.invite.findUnique({ where: { id: inviteId } });
@@ -51,7 +48,7 @@ export const acceptInvite = async (req, res) => {
         },
       },
       include: {
-        participants: true, // This ensures participants are included in the returned data
+        participants: true, 
       },
     });
     await prisma.invite.delete({ where: { id: inviteId } });
@@ -63,7 +60,6 @@ export const acceptInvite = async (req, res) => {
 };
 
 export const declineInvite = async (req, res) => {
-  //when you decline invite the object gets deleted
   try {
     const { inviteId } = req.body;
     const invite = await prisma.invite.findUnique({ where: { id: inviteId } });
