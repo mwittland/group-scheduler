@@ -21,6 +21,7 @@ This project was a valuable learning experience that helped me grow as a develop
 ## Hosting
 
 The application is live and hosted at [https://whatdayswork.onrender.com/](https://whatdayswork.onrender.com/). Feel free to explore the app and try out its features!
+Note: The application is currently down, as the back-end hosting trial reached its maximum usage.
 
 ## Features
 
